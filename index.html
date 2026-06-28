@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kho Kiến Thức Tài Chính</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f4f3ef;
+  --surface:#fff;
+  --sb:#1b1f26;
+  --sb-hover:#252b33;
+  --sb-active-bg:rgba(42,122,82,0.14);
+  --sb-active-text:#6ee3a5;
+  --sb-text:#b0b8c8;
+  --sb-muted:#4e5668;
+  --border:#e6e4dc;
+  --border-md:#d0cdc4;
+  --text1:#181816;
+  --text2:#56534f;
+  --text3:#96938e;
+  --accent:#2a7a52;
+  --accent-h:#1f6040;
+  --accent-lt:#eaf4ef;
+  --danger:#b94040;
+  --r:10px;
+  --sbw:240px;
+}
+
+html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text1);line-height:1.6;overflow:hidden}
+
+/* ══ SHELL ══ */
+.app{display:flex;height:100vh}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:var(--sbw);background:var(--sb);
+  display:flex;flex-direction:column;flex-shrink:0;
+  border-right:1px solid rgba(255,255,255,0.04);
+  overflow:hidden;
+}
+.sb-logo{
+  padding:16px 15px 13px;
+  border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;
+}
+.sb-logo-row{display:flex;align-items:center;gap:9px}
+.sb-icon{
+  width:32px;height:32px;background:var(--accent);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.sb-name{font-size:13.5px;font-weight:700;color:#fff}
+.sb-sub{font-size:10.5px;color:var(--sb-muted);margin-top:1px}
+
+/* stats */
+.sb-stats{display:flex;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.sb-stat{
+  flex:1;text-align:center;padding:9px 4px;
+  border-right:1px solid rgba(255,255,255,0.05);
+}
+.sb-stat:last-child{border-right:none}
+.sv{font-size:17px;font-weight:800;color:#fff;line-height:1.1}
+.sl{font-size:9.5px;color:var(--sb-muted);margin-top:2px}
+
+/* search in sidebar */
+.sb-search{
+  padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;
+}
+.sb-search-inner{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
+  border-radius:7px;padding:6px 10px;
+}
+.sb-search-inner input{
+  border:none;background:transparent;outline:none;
+  font-size:12.5px;color:var(--sb-text);width:100%;
+}
+.sb-search-inner input::placeholder{color:var(--sb-muted)}
+
+/* nav */
+.sb-nav{flex:1;overflow-y:auto;padding:6px 0;
+  scrollbar-width:thin;scrollbar-color:#2e3540 transparent}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:#2e3540;border-radius:3px}
+
+.sb-label{
+  font-size:9px;font-weight:700;letter-spacing:0.12em;
+  color:var(--sb-muted);text-transform:uppercase;
+  padding:11px 15px 4px;
+}
+
+.tab{
+  display:flex;align-items:center;gap:9px;
+  padding:7.5px 15px;width:100%;
+  font-size:12.5px;color:var(--sb-text);
+  background:none;border:none;cursor:pointer;text-align:left;
+  transition:background 0.1s,color 0.1s;position:relative;
+}
+.tab:hover{background:var(--sb-hover);color:#fff}
+.tab.active{
+  background:var(--sb-active-bg);
+  color:var(--sb-active-text);font-weight:600;
+}
+.tab.active::before{
+  content:'';position:absolute;left:0;top:5px;bottom:5px;
+  width:3px;background:var(--accent);border-radius:0 3px 3px 0;
+}
+.te{font-size:14px;flex-shrink:0;width:17px;text-align:center}
+.tl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbadge{
+  font-size:10px;padding:1px 6px;border-radius:8px;flex-shrink:0;
+  background:rgba(255,255,255,0.06);color:var(--sb-muted);
+}
+.tab.active .tbadge{background:rgba(42,122,82,0.3);color:var(--sb-active-text)}
+
+/* footer */
+.sb-footer{padding:11px 13px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.btn-add{
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  background:var(--accent);color:#fff;border:none;border-radius:7px;
+  padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:background 0.15s;
+}
+.btn-add:hover{background:var(--accent-h)}
+
+/* ══ CONTENT ══ */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+.topbar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 24px;height:56px;display:flex;align-items:center;
+  gap:14px;flex-shrink:0;
+}
+.topbar-title{font-size:15px;font-weight:700;color:var(--text1);flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-count{
+  font-size:11.5px;color:var(--text3);white-space:nowrap;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:6px;padding:3px 10px;flex-shrink:0;
+}
+
+/* view toggle */
+.view-btns{display:flex;gap:2px;flex-shrink:0}
+.vbtn{
+  width:30px;height:28px;display:flex;align-items:center;justify-content:center;
+  background:none;border:1px solid var(--border-md);border-radius:5px;cursor:pointer;
+  color:var(--text3);font-size:14px;transition:all 0.12s;
+}
+.vbtn:first-child{border-radius:5px 0 0 5px}
+.vbtn:last-child{border-radius:0 5px 5px 0;margin-left:-1px}
+.vbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* scroll */
+.scroll-area{
+  flex:1;overflow-y:auto;padding:18px 24px 32px;
+  scrollbar-width:thin;scrollbar-color:var(--border-md) transparent;
+}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:4px}
+
+/* ══ CARDS — LIST VIEW ══ */
+.cards-list{display:flex;flex-direction:column;gap:11px}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  transition:border-color 0.15s,box-shadow 0.12s;cursor:pointer;
+}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(42,122,82,0.08)}
+
+.card-top{padding:14px 18px 10px}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.card-title{
+  font-size:14px;font-weight:600;color:var(--text1);line-height:1.45;flex:1;
+}
+.card-year{
+  font-size:10.5px;color:var(--text3);background:var(--bg);
+  border:1px solid var(--border);border-radius:5px;
+  padding:2px 7px;white-space:nowrap;flex-shrink:0;
+}
+.card-preview{
+  font-size:13px;color:var(--text2);line-height:1.65;
+  overflow:hidden;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.card-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 18px 10px;border-top:1px solid var(--border);
+  background:#fafaf8;
+}
+.ctags{display:flex;align-items:center;gap:6px}
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--bg);color:var(--text2);
+  font-size:10.5px;padding:2px 8px;border-radius:5px;
+  border:1px solid var(--border);font-weight:500;
+}
+.tdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.csrc{font-size:11px;color:var(--text3)}
+.cactions{display:flex;gap:6px;align-items:center}
+.btn-read{
+  display:flex;align-items:center;gap:4px;
+  font-size:11.5px;font-weight:600;color:var(--accent);
+  background:var(--accent-lt);border:1px solid rgba(42,122,82,0.2);
+  border-radius:6px;padding:4px 10px;cursor:pointer;
+  transition:all 0.12s;white-space:nowrap;
+}
+.btn-read:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-del{
+  font-size:12px;color:var(--text3);background:none;
+  border:1px solid transparent;border-radius:5px;
+  padding:4px 7px;cursor:pointer;transition:all 0.12s;
+}
+.btn-del:hover{color:var(--danger);background:#fdf0ee;border-color:#f4c8c8}
+
+/* ══ CARDS — GRID VIEW ══ */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:12px;
+}
+.cards-grid .card-preview{-webkit-line-clamp:3}
+
+/* ══ EMPTY ══ */
+.empty{
+  text-align:center;padding:80px 20px;color:var(--text3);
+}
+.empty-icon{font-size:48px;margin-bottom:14px;opacity:0.5}
+.empty-title{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text2)}
+.empty-sub{font-size:13px}
+
+/* ══ READER MODAL ══ */
+.reader-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(8,10,14,0.6);z-index:600;
+  align-items:flex-start;justify-content:center;
+  padding:20px 16px 40px;overflow-y:auto;
+}
+.reader-overlay.open{display:flex}
+
+.reader{
+  background:var(--surface);border-radius:14px;
+  width:100%;max-width:780px;margin:auto;
+  box-shadow:0 20px 80px rgba(0,0,0,0.28);
+  animation:fadeUp .18s ease;overflow:hidden;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.rdr-header{
+  padding:22px 26px 16px;border-bottom:1px solid var(--border);
+  background:#fcfcfb;
+}
+.rdr-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.rdr-title{font-size:20px;font-weight:700;line-height:1.38;color:var(--text1)}
+
+.rdr-body{
+  padding:26px 30px 32px;
+  font-size:15.5px;color:var(--text2);line-height:1.9;
+  white-space:pre-wrap;word-break:break-word;
+  max-height:68vh;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--border-md) transparent;
+}
+.rdr-body::-webkit-scrollbar{width:5px}
+.rdr-body::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:4px}
+
+.rdr-footer{
+  padding:13px 26px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fcfcfb;
+}
+.rdr-footer-info{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:12px}
+.rdr-nav{display:flex;gap:8px}
+.btn-nav{
+  font-size:12px;font-weight:500;
+  background:var(--bg);border:1px solid var(--border-md);
+  border-radius:6px;padding:6px 14px;cursor:pointer;
+  color:var(--text2);transition:all 0.12s;
+}
+.btn-nav:hover{background:var(--text1);color:#fff;border-color:var(--text1)}
+.btn-nav:disabled{opacity:0.35;cursor:not-allowed}
+.btn-close-rdr{
+  font-size:12px;font-weight:600;
+  background:var(--accent);color:#fff;border:none;
+  border-radius:6px;padding:6px 16px;cursor:pointer;
+  transition:background 0.12s;
+}
+.btn-close-rdr:hover{background:var(--accent-h)}
+
+/* ══ ADD MODAL ══ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(8,10,14,0.52);z-index:500;
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border-radius:14px;
+  width:100%;max-width:560px;max-height:94vh;overflow-y:auto;
+  padding:24px;box-shadow:0 16px 60px rgba(0,0,0,0.22);
+  animation:fadeUp .18s ease;
+}
+.modal h3{font-size:15.5px;font-weight:700;margin-bottom:16px;color:var(--text1)}
+.fg{margin-bottom:12px}
+.fg label{
+  display:block;font-size:10.5px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;
+}
+.fg input,.fg select,.fg textarea{
+  width:100%;border:1px solid var(--border-md);border-radius:7px;
+  padding:9px 12px;font-size:13.5px;font-family:inherit;
+  color:var(--text1);background:var(--bg);outline:none;
+  transition:border-color 0.15s,background 0.15s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--accent);background:#fff;
+}
+.fg textarea{min-height:170px;resize:vertical;line-height:1.65}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{
+  padding:8px 18px;border-radius:7px;
+  border:1px solid var(--border-md);background:none;
+  font-size:13px;cursor:pointer;color:var(--text2);
+  transition:background 0.12s;
+}
+.btn-cancel:hover{background:var(--bg)}
+.btn-save{
+  padding:8px 20px;border-radius:7px;
+  background:var(--accent);color:#fff;
+  border:none;font-size:13px;font-weight:600;
+  cursor:pointer;transition:background 0.12s;
+}
+.btn-save:hover{background:var(--accent-h)}
+
+/* ══ TOAST ══ */
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--text1);color:#fff;
+  padding:10px 18px;border-radius:9px;
+  font-size:13px;font-weight:500;
+  transform:translateY(60px);opacity:0;
+  transition:all .22s;z-index:900;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:680px){
+  :root{--sbw:56px}
+  .sb-name,.sb-sub,.tl,.tbadge,.sb-label,.sb-stats,.sb-search,.sb-footer .btn-add span{display:none}
+  .tab{padding:10px;justify-content:center}
+  .tab.active::before{display:none}
+  .topbar{padding:0 14px}
+  .scroll-area{padding:12px 14px 28px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-row">
+      <div class="sb-icon">📊</div>
+      <div>
+        <div class="sb-name">Kho Kiến Thức</div>
+        <div class="sb-sub">Tài chính · Đầu tư</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-stats">
+    <div class="sb-stat"><div class="sv" id="statTotal">0</div><div class="sl">Bài viết</div></div>
+    <div class="sb-stat"><div class="sv" id="statCats">10</div><div class="sl">Chủ đề</div></div>
+    <div class="sb-stat"><div class="sv" id="statNew">0</div><div class="sl">Mới nhất</div></div>
+  </div>
+
+  <div class="sb-search">
+    <div class="sb-search-inner">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" style="color:#4e5668;flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-label">Danh mục</div>
+    <div id="tabsContainer"></div>
+  </nav>
+
+  <div class="sb-footer">
+    <button class="btn-add" onclick="openAddModal()">
+      <span style="font-size:16px;line-height:1">＋</span>
+      <span>Thêm bài mới</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ══ CONTENT ══ -->
+<div class="content">
+  <div class="topbar">
+    <div class="topbar-title" id="sectionTitle">📋 Tất cả bài viết</div>
+    <span class="topbar-count" id="sectionCount">0 bài</span>
+    <div class="view-btns">
+      <button class="vbtn active" id="vbtnList" title="Danh sách" onclick="setView('list')">☰</button>
+      <button class="vbtn" id="vbtnGrid" title="Lưới" onclick="setView('grid')">⊞</button>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+    <div id="cardsContainer"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ READER MODAL ══ -->
+<div class="reader-overlay" id="readerOverlay" onclick="handleReaderClick(event)">
+  <div class="reader" id="readerBox">
+    <div class="rdr-header">
+      <div class="rdr-meta" id="rdrMeta"></div>
+      <div class="rdr-title" id="rdrTitle"></div>
+    </div>
+    <div class="rdr-body" id="rdrBody"></div>
+    <div class="rdr-footer">
+      <div class="rdr-footer-info" id="rdrInfo"></div>
+      <div class="rdr-nav">
+        <button class="btn-nav" id="btnPrev" onclick="navReader(-1)">← Trước</button>
+        <button class="btn-nav" id="btnNext" onclick="navReader(1)">Tiếp →</button>
+        <button class="btn-close-rdr" onclick="closeReader()">✕ Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <h3>➕ Thêm bài viết mới</h3>
+    <div class="fg">
+      <label>Tiêu đề *</label>
+      <input type="text" id="formTitle" placeholder="Nhập tiêu đề bài viết...">
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Danh mục *</label>
+        <select id="formCategory">
+          <option value="">-- Chọn danh mục --</option>
+          <option value="Kiến thức kinh tế">📚 Kiến thức kinh tế</option>
+          <option value="Ngân hàng & Tiền tệ">🏦 Ngân hàng & Tiền tệ</option>
+          <option value="Chứng khoán">📈 Chứng khoán</option>
+          <option value="Bất động sản">🏠 Bất động sản</option>
+          <option value="Vàng & Tiền tệ">💰 Vàng & Tiền tệ</option>
+          <option value="Trái phiếu & Rủi ro">🪙 Trái phiếu & Rủi ro</option>
+          <option value="Forex & Crypto">🎰 Forex & Crypto</option>
+          <option value="Lịch sử tài chính">📰 Lịch sử tài chính</option>
+          <option value="Lời khuyên & Triết lý">💡 Lời khuyên & Triết lý</option>
+          <option value="Tâm lý & Kỹ năng">🧠 Tâm lý & Kỹ năng</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Nguồn</label>
+        <input type="text" id="formSource" placeholder="MrT, Icetea Phố Wall...">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Nội dung *</label>
+      <textarea id="formContent" placeholder="Dán nội dung bài viết vào đây..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddModal()">Huỷ</button>
+      <button class="btn-save" onclick="savePost()">Lưu bài viết</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ DATA ══ */
+const CATS = [
+  {id:"all",               label:"Tất cả",        e:"📋"},
+  {id:"Kiến thức kinh tế", label:"Kinh tế cơ bản",e:"📚"},
+  {id:"Ngân hàng & Tiền tệ",label:"Ngân hàng & CSTT",e:"🏦"},
+  {id:"Chứng khoán",       label:"Chứng khoán",   e:"📈"},
+  {id:"Bất động sản",      label:"BĐS & Đầu tư",  e:"🏠"},
+  {id:"Vàng & Tiền tệ",   label:"Vàng & Tiền tệ",e:"💰"},
+  {id:"Trái phiếu & Rủi ro",label:"Trái phiếu",   e:"🪙"},
+  {id:"Forex & Crypto",    label:"Forex & Crypto", e:"🎰"},
+  {id:"Lịch sử tài chính", label:"Lịch sử KH",    e:"📰"},
+  {id:"Lời khuyên & Triết lý",label:"Lời khuyên", e:"💡"},
+  {id:"Tâm lý & Kỹ năng",  label:"Tâm lý",        e:"🧠"},
+];
+
+const COLORS = {
+  "Kiến thức kinh tế":"#2d7a4f","Ngân hàng & Tiền tệ":"#1a6b8a",
+  "Chứng khoán":"#7a4a2d","Bất động sản":"#5a4a8a",
+  "Vàng & Tiền tệ":"#8a6a1a","Trái phiếu & Rủi ro":"#8a3a3a",
+  "Forex & Crypto":"#3a5a8a","Lịch sử tài chính":"#5a5a5a",
+  "Lời khuyên & Triết lý":"#3a7a5a","Tâm lý & Kỹ năng":"#7a3a6a",
+};
+
+const SEED = [
+  {id:1,title:"Kiến thức kinh tế cơ bản nhất",category:"Kiến thức kinh tế",source:"MrT Finance",date:"2023",content:"KIẾN THỨC KINH TẾ CƠ BẢN NHẤT MÀ BẠN PHẢI BIẾT!\n\n1. Kinh tế có 2 thành phần chính là Kinh tế vi mô và Kinh tế vĩ mô\nKinh tế vi mô nghiên cứu hành vi, động cơ của người tiêu dùng, giá cả, lợi nhuận... Kinh tế vĩ mô nghiên cứu nền kinh tế rộng hơn và những giá trị lớn hơn như lãi suất, GDP và các công cụ khác mà bạn thường thấy trong mục kinh tế của các tờ báo.\n\nKinh tế vi mô hữu ích hơn cho các nhà quản trị còn kinh tế vĩ mô có lợi hơn cho các nhà đầu tư.\n\n2. Tổng sản phẩm quốc nội (GDP)\nĐây là công cụ cơ bản nhất để đo kích thước của 1 nền kinh tế. GDP sẽ bằng tổng thu nhập của tất cả người dân trong 1 quốc gia hoặc tổng giá trị thị trường của tất cả sản phẩm và dịch vụ được sản xuất trong quốc gia đó.\nHiện nay, Hoa Kỳ là nền kinh tế lớn nhất thế giới xét theo GDP (khoảng 14 ngàn tỷ USD).\n\n3. Tốc độ tăng trưởng\nSự phát triển của 1 nền kinh tế được đo bằng tốc độ tăng trưởng GDP — cho thấy thu nhập trung bình một người dân tăng lên bao nhiêu mỗi năm.\n\n4. Luật cung – cầu: nền tảng của kinh tế\nBất cứ khi nào nguồn cung tăng sẽ làm cho giá giảm và cầu tăng sẽ làm giá tăng.\n\n5. Lạm phát\nLạm phát (tính theo phần trăm) cho thấy mức độ tăng giá của hàng hoá so với năm trước. Trong nền kinh tế phát triển, lạm phát hàng năm vào khoảng 2%.\n\n6. Lãi suất\nKhi bạn cho ai đó vay tiền, bạn mong đợi sẽ nhận được thêm một khoản tiền đền bù. Lãi suất là 1 số dương phản ánh số tiền bạn sẽ nhận được thừa ra so với khoản ban đầu bạn cho vay. Trong ngắn hạn, lãi suất thường được quy định bởi các NHTW. Về lâu dài, lãi suất sẽ do thị trường quyết định và phụ thuộc vào tỉ lệ lạm phát và viễn cảnh của nền kinh tế. Những cơ chế NHTW dùng để kiểm soát lãi suất ngắn hạn được gọi là chính sách tiền tệ.\n\n7. Mối quan hệ Lãi suất – Lạm phát – Tăng trưởng\nGần như có 1 mối quan hệ ngược chiều giữa lãi suất và tỉ lệ tăng trưởng GDP. Khi bạn gia tăng lãi suất, lạm phát sẽ có xu hướng đi xuống, tuy nhiên đi cùng với nó là kinh tế phát triển chậm lại.\n\n8. Chính sách tài khóa\nChính phủ có thể kiểm soát nền kinh tế bằng cách điều chỉnh chi tiêu. Khi chính phủ chi tiêu nhiều, dẫn đến cầu nhiều hơn và giá tăng nhiều hơn — nền kinh tế tăng trưởng tốt nhưng đồng thời mang theo lạm phát cao và ngược lại.\n\n9. Chu kỳ kinh tế\nNền kinh tế có những thời kì bùng nổ và khủng hoảng với chu kỳ khoảng 7 năm. Khởi đầu chu kỳ sẽ là sự bùng nổ của nền kinh tế, sau đó nó phát triển đến mức cực thịnh, tiếp đến sẽ bước vào suy thoái và cuối cùng là sang chu kỳ tiếp theo.\n\n10. Chi phí cơ hội\nGiá trị của hành động mà bạn bỏ lỡ được gọi là chi phí cơ hội. Bạn nên chọn những công việc mang lại doanh thu cao hơn những công việc khác mà mình đã từ bỏ."},
+  {id:2,title:"4 giai đoạn chu kỳ kinh tế — ghi thuộc lòng",category:"Kiến thức kinh tế",source:"MrT Finance",date:"2023",content:"GHI CHÉP VÀO CHO NHỚ — Tốt nhất đọc đi đọc lại 100 lần cho thuộc\n\n1) Giai đoạn phục hồi: Sản xuất tăng, GDP tăng, việc làm nhiều.\n\n2) Giai đoạn tăng trưởng: lãi suất vay thấp, nới zoom, nhà nước bơm tiền nền kinh tế, đẩy mạnh phát triển.\n\n3) Giai đoạn suy giảm: lạm phát, lãi suất cao thắt chặt tín dụng, sản xuất khó khăn.\n\n4) Giai đoạn suy thoái: lãi suất tăng kỷ lục, doanh nghiệp phá sản, thất nghiệp, nạn đói, bđs, chứng khoán đáy → những lúc này là lúc tiền mặt làm vua, nhiều tỉ phú ra đời.\n\nĐây là quy luật lịch sử rồi nước nào cũng phải trải qua, các bạn nhớ học thuộc nhé."},
+  {id:3,title:"Đại suy thoái 2023–2024 và 4 chu kỳ kinh tế",category:"Kiến thức kinh tế",source:"MrT Finance",date:"2023",content:"ĐẠI SUY THOÁI TOÀN CẦU 2023–2024 sắp sảy ra (bí mật của các triệu phú)\n\n- Đây không phải thời điểm làm nhà, mua xe, kinh doanh, tiêu sản...\nTại sao đây là lúc rất nhiều triệu phú sinh ra:\n+ bđs giảm 50%\n+ chứng khoán đỏ sàn\n+ coin giảm 70% từ đỉnh → tiền mặt lúc này sẽ làm vua, những con sói sẽ đi săn.\n- Do ngân hàng tăng lãi suất để kìm lạm phát\n- Những ai dùng đòn bẩy quá tay để đi vay mua bđs, chứng khoán sẽ phải thanh khoản\n\nCó 4 chu kỳ kinh tế:\n+ giai đoạn phục hồi: sản xuất tăng, việc làm ổn định\n+ giai đoạn tăng trưởng: lãi suất thấp, gdp cao, zood tín dụng để phát triển\n+ giai đoạn suy giảm: lạm phát, NH tăng lãi suất, sản xuất trì truệ\n+ giai đoạn suy thoái: lãi suất tăng kỷ lục, thất nghiệp, bđs, ck đóng băng → lúc này nên mua bđs, chứng khoán."},
+  {id:4,title:"Quy luật kinh tế: CPI, GDP, Non-Farm → Vàng",category:"Kiến thức kinh tế",source:"MrT Finance",date:"2023",content:"QUY LUẬT KINH TẾ.\n\n1. CPI tăng => USD tăng => Vàng Giảm\n\n2. GDP tăng => USD tăng => Vàng Giảm\n\n3. NON FARM tăng => USD tăng => Vàng Giảm\n\n4. LÃI SUẤT TĂNG => LẠM PHÁT tăng => Vàng Giảm.\n\nNhững trader Pro chuyên đánh tin. Đi Săn tin. Biết sẽ phải làm gì khi tin ra."},
+  {id:5,title:"Bộ khung kiến thức để trở thành nhà đầu tư thành công",category:"Kiến thức kinh tế",source:"MrT Finance",date:"2023",content:"Trong hầu hết các trường hợp, để trở giàu có và tự do tài chính, bạn cần phải trở thành một nhà đầu tư. Để trở thành nhà đầu tư thành công, bạn cần tìm hiểu và áp dụng bộ khung kiến thức sau:\n\n1. Kinh tế học vĩ mô: phải hiểu được Tỷ giá, lãi suất, cung tiền. Lạm phát là gì? Lịch sử của tiền, tiền sinh ra để làm gì? Nguyên tắc phát hành tiền tệ? Ai kiểm soát cung tiền? Ai điều phối giá vàng? Dòng tiền và cách nhận biết xu hướng dòng tiền...\n\n2. Tâm lý học hành vi.\n\n3. Xã hội học.\n\n4. Chính trị trong nước và quốc tế.\n\n5. Các kỹ năng về giao tiếp, đàm phán...\n\nNgười Trung Quốc có câu: \"Khi cả xã hội đều đi đào vàng, thì là lúc mình đi buôn cuốc xẻng\". Hiểu thời cuộc, tách rời khỏi đám đông, đi trước đón đầu dòng tiền mới đang tồn tại trong thời kỳ này."},
+  {id:6,title:"Lãi suất tái chiết khấu vs tái cấp vốn — NHNN hỗ trợ ngân hàng nhỏ",category:"Ngân hàng & Tiền tệ",source:"MrT Finance",date:"2023",content:"Giữa lãi suất tái chiết khấu và lãi suất tái cấp vốn có sự khác biệt như sau:\n\n- Về đối tượng áp dụng:\n+ Lãi suất tái chiết khấu: Các giấy tờ có giá.\n+ Lãi suất tái cấp vốn: Các khoản cho vay của các ngân hàng thương mại.\n\n- Về tài sản thế chấp:\nTài sản thế chấp đều là giấy tờ có giá, nhưng lãi suất tái chiết khấu áp dụng với các giấy tờ có giá có độ rủi ro thấp hơn như: Tín phiếu Ngân hàng Nhà nước, Trái phiếu Chính phủ,...\n\nKhi nào lãi suất tái cấp vốn giảm thì lãi suất mà dân chúng và doanh nghiệp vay mới giảm.\n\nNHNN cho VCB vay lãi suất 3,5% để VCB cho các bank nhỏ STB, ACB vay với lãi suất 5% thay vì họ vay NHNN với lãi suất 6%.\n\nNHNN muốn giúp đỡ các ngân hàng nhỏ nhưng giấu mặt nên thông qua các bank lớn cho bank nhỏ vay với lãi suất thấp hơn vay NHNN.\n\nChứ người dân và doanh nghiệp vẫn phải vay cao chứ không giảm.\n\nLãi suất tái cấp vốn vẫn là 6%, tức các NHTM vẫn cho người dân, DN vay lãi suất 13-17%/năm, không có giảm mà có xu hướng tăng, cty ck cho vay margin lãi suất cao.\n\nKhông hiểu gì về Ngân hàng Nhà nước mà vay tiền mua bđs, chứng khoán sau đó thua lỗ cháy tài khoản."},
+  {id:7,title:"Tỷ giá hối đoái — cơ chế hình thành và các yếu tố tác động",category:"Ngân hàng & Tiền tệ",source:"MrT Finance",date:"2023",content:"Tìm hiểu về TỶ GIÁ HỐI ĐOÁI\n\nĐ/n: Là giá cả 1 đồng ngoại tệ tính bằng X đồng nội tệ (1 USD=23.357VND)\n\nCơ chế hình thành: Giá 1 Lít sữa ở Việt Nam: 23.357 VND, giá 1 Lít sữa ở Mỹ: 1 USD => 1USD = 23.357 VND. Tỷ giá được hình thành dựa trên rổ hàng hóa.\n\nBiến động tỷ giá: Tỷ giá tăng hay giảm phụ thuộc vào quy luật cung cầu.\n\nYếu tố tác động cung cầu 1 đồng tiền:\n\n+ Lạm phát: Lạm phát Việt Nam > lạm phát Mỹ => Mua sữa Việt Nam trở nên đắt hơn so với mua sữa ở Mỹ => người dân Việt Nam sẽ mua sữa ở Mỹ để kiếm lợi => nhu cầu USD của người Việt Nam tăng => USD tăng giá.\n\n+ Lãi suất: Lãi suất Việt Nam > lãi suất Mỹ => dân Mỹ đầu tư vào Việt Nam để hưởng lãi suất cao, muốn vậy dân Mỹ phải đổi USD sang VND => VND tăng giá so với USD.\n\n+ Xuất nhập khẩu: xuất khẩu Việt Nam sang Mỹ tăng so với nhập khẩu => Việt Nam thu được nhiều USD => USD giảm giá so với VND.\n\n+ Kỳ vọng nền kinh tế: kinh tế Việt Nam được kỳ vọng tăng trưởng tương lai => cầu VND tăng => VND tăng giá.\n\nKhi phân tích một nhân tố, giả định các nhân tố còn lại không đổi."},
+  {id:8,title:"Giai đoạn chờ giảm lãi suất nguy hiểm hơn giai đoạn tăng",category:"Ngân hàng & Tiền tệ",source:"MrT Finance",date:"2023",content:"Giai đoạn TĂNG lãi suất không đáng sợ bằng giai đoạn CHỜ GIẢM lãi suất.\n\nTrong quá trình tăng lãi suất chủ yếu tác động đến tâm lý của người đi vay chứ chưa tác động nhiều đến tài chính của họ. Tuy nhiên giai đoạn lãi suất neo cao, và chờ giảm lãi suất mới \"bào mòn\" túi tiền của người vay nợ. Giống như \"hiệu ứng ếch luộc\".\n\n=> Sau khi lãi suất đạt đỉnh khoảng 6 tháng–1 năm mới là giai đoạn khủng khiếp nhất của nền kinh tế.\n\n+ Năm 1995, FED neo mức lãi suất cao trên 5% đến năm 1997 thì khủng hoảng tài chính ở Châu Á xảy ra.\n+ Năm 1999, FED tiếp tục neo mức lãi suất cao trên 5.5% đến 2000 bong bóng Dotcom chính thức nổ.\n+ Giữa năm 2006, FED neo mức lãi suất trên 5% kéo dài đến đầu 2008 thì khủng hoảng tài chính bắt đầu lan rộng cả thế giới.\n\n=> Lãi suất neo cao càng lâu thì hậu quả càng nặng nề."},
+  {id:9,title:"Quá trình tạo ra bùng nổ kinh tế và khủng hoảng — 4 bước của ông trùm",category:"Ngân hàng & Tiền tệ",source:"MrT Finance",date:"2023",content:"Quá trình tạo ra BÙNG NỔ KINH TẾ VÀ KHỦNG HOẢNG\n\nBước 1: Mở rộng nguồn cung tín dụng với lãi suất cực thấp cho các hoạt động sản xuất, các ngành công nghiệp. Tiền được bơm ra thị trường ngày càng nhiều, các ông trùm thu mua các tài sản tài chính.\n\nBước 2: Với nguồn cung tiền nhiều, các ông trùm thiết kế các trò chơi với các tài sản tài chính và các hàng hóa như vàng, dầu, tiền tệ. Họ tự tạo ra nhu cầu ảo để đẩy giá tài sản lên cao nhằm thu hút dòng tiền từ các quốc gia có thặng dư vốn, Nhà Đầu Tư giàu có.\n\nBước 3: Họ chọn thời điểm khi người chơi dồn hết tiền vào các tài sản tài chính, tâm lý toàn cầu lạc quan cực độ. Họ dùng IMF, ngân hàng thế giới để dự báo kinh tế thế giới rất tốt. Sau đó họ lặng lẽ bán hết tài sản tài chính ở vùng đỉnh, sử dụng hợp đồng Quyền Chọn Bán để bán các tài sản tài chính ở vùng đỉnh.\n\nBước 4: Cho bong bóng tài sản rơi, tung tin khủng hoảng kinh tế thế giới ra truyền thông, tạo ra sự hoảng loạn.\n\nBước cuối cùng: thu lợi nhuận lớn từ các chiến thuật: Mua vùng đáy bán vùng đỉnh. Mua hợp đồng bán khống cổ phiếu ở vùng đỉnh. Ép Quốc Gia đó cứu nền kinh tế, bằng cách bơm tiền ra giúp các nhà băng lớn, tập đoàn lớn (thuộc sở hữu của các ông trùm) khi họ giả vờ công bố lỗ vay được tiền với lãi suất rẻ mạt.\n\nCuối cùng, dùng tiền từ các nhà băng lớn, với lãi suất ưu đãi trong giai đoạn kinh tế trì trệ sau khủng hoảng để đi mua các tài sản chính, các công ty với giá siêu rẻ và lên kế hoạch cho đợt tăng trưởng và khủng hoảng tiếp theo."},
+  {id:10,title:"Hệ thống tài chính toàn cầu vừa gãy ở Tokyo",category:"Ngân hàng & Tiền tệ",source:"Under Wall Street",date:"2024",content:"HỆ THỐNG TÀI CHÍNH TOÀN CẦU VỪA GÃY Ở TOKYO\n\nLợi suất trái phiếu 30 năm của Nhật Bản hôm nay đạt 3,41%. Con số này nghe có vẻ vô nghĩa với bạn. Nhưng đây là lý do nó đáng khiến bạn lo sợ.\n\nNhật Bản đang nợ 230% tổng sản phẩm quốc nội. Đây là quốc gia mắc nợ nhiều nhất trong lịch sử loài người. Suốt 35 năm qua, họ duy trì hoạt động bằng cách vay với lãi suất gần bằng 0. Kỷ nguyên đó đã kết thúc sáng nay.\n\nĐiều gì vừa xảy ra: Lạm phát lõi đang ở mức 3,0%. Lợi suất trái phiếu chính phủ tăng vọt lên mức chưa từng thấy từ năm 1999. Nhật Bản buộc phải chi 2% GDP cho quốc phòng ... gần 9 nghìn tỷ yên mỗi năm.\n\nNgân hàng Trung ương Nhật Bản bị kẹt giữa hai lựa chọn bất khả thi: tăng lãi suất và gây ra sụp đổ nợ, hoặc giữ lãi suất thấp và để lạm phát phá hủy tiền tiết kiệm. Họ đã chọn cánh cửa thứ hai.\n\nTại sao bạn phải quan tâm: Mọi ngân hàng lớn, quỹ đầu cơ và tổ chức tài chính trên thế giới đã vay yên với lãi suất rẻ và đầu tư nơi khác suốt 30 năm. Giao dịch \"carry trade\" này có thể trị giá từ 350 tỷ đến 4 nghìn tỷ đô la. Không ai biết con số thực vì nó ẩn trong các công cụ phái sinh.\n\nKhi hệ thống Nhật Bản gãy, dòng tiền này sẽ tháo chạy. Nhanh. Lần trước chúng ta thấy một đợt rung chuyển ... tháng 7/2024 ... chỉ số Nikkei giảm 12,4% trong một ngày. Nasdaq giảm 13%. Đó chỉ là một cơn chấn động nhỏ. Trận động đất đang đến.\n\nKết luận: Lãi suất toàn cầu sẽ tăng vĩnh viễn thêm 0,5–1,0%. Không phải vì lạm phát. Mà vì quốc gia chủ nợ lớn nhất thế giới không còn khả năng trợ cấp tăng trưởng toàn cầu.\n\nĐây không phải suy thoái. Đây là sự thay đổi chế độ. Tokyo vừa làm thế giới gãy hôm nay. Bạn sẽ cảm nhận điều đó vào ngày mai."},
+  {id:11,title:"Chu kỳ tăng giảm chứng khoán 10 năm — 4 giai đoạn",category:"Chứng khoán",source:"MrT Finance",date:"2023",content:"Khi nào chứng khoán tăng, giảm?\n\nVì sao Chứng khoán là khoản nợ nên tăng giảm là phụ thuộc vào lãi suất cho vay. Do đó lãi suất quyết định xu hướng tăng, giảm của chứng khoán.\n\nChu kỳ tăng giảm chứng khoán là 10 năm trải qua 4 giai đoạn. Lặp đi lặp lại hoài:\n\n1. Kinh tế phát triển bền vững: lãi suất cho vay VND ổn định là 8%/năm. Chứng khoán tăng 5 năm từ 2013–2018.\n\n2. Kinh tế ở đỉnh và bắt đầu giảm: số lượng người vay đạt đỉnh, tài sản thế chấp ngân hàng đạt đỉnh, tức là ngân hàng không thể tạo ra tiền mới nữa vì ko còn tài sản thế chấp, ko còn người tới vay nữa. Lúc này lãi suất cho vay tăng nhẹ lên 11%/năm. Chứng khoán giảm 1 năm từ 2019–2020.\n\n3. Kinh tế ở đáy khủng hoảng kinh tế: lãi suất cho vay VND giảm về lại 8%/năm. Có gói bơm tiền ra. Chứng khoán tăng 2 năm từ 2020–2022.\n\n4. Kinh tế thời lạm phát cao: Lãi suất cho vay VND tăng cao. Chứng khoán giảm 2 năm từ 2022–2024."},
+  {id:12,title:"Phân tích ngành chứng khoán — CTCK kiếm tiền bằng cách nào?",category:"Chứng khoán",source:"Under Wall Street",date:"2023",content:"Ngành chứng khoán\n\nĐẦU TIÊN, CÔNG TY CHỨNG KHOÁN (CTCK) KIẾM TIỀN BẰNG CÁCH NÀO?\n\nCó rất nhiều cách mà một CTCK kiếm tiền, nhưng mảng doanh thu chiếm lớn nhất đến từ hoạt động môi giới. Bất kì ai trong chúng ta muốn mua/bán cổ phiếu đều phải có tài khoản chứng khoán và khả năng cao các bạn sẽ được tham gia vào group \"vip\" để được các bạn \"môi giới\" hỗ trợ mở tài khoản và hướng dẫn mua bán. Mỗi khi các bạn thực hiện giao dịch, những người môi giới này sẽ được hưởng một % nhỏ trên tổng giao dịch của bạn.\n\nMảng thứ 2 – cho vay margin\nChứng khoán đôi khi bị ví như cờ bạc (nhưng hợp pháp và được pháp luật bảo vệ). Trong chứng khoán thì đó chính là vay margin. Họ trả bạn lãi qua đêm khoảng 3%/năm, xong cho người khác vay margin lãi tầm 14%/năm. Lời còn ác hơn ngân hàng nữa.\n\nDoanh thu 2 mảng trên chiếm hơn 50% tổng doanh thu của hầu hết CTCK.\n\nNguồn doanh thu thứ 3 – Tự doanh\nHầu hết các doanh nghiệp bên ngoài sẽ có một bộ phận đầu tư, quản lý tiền của doanh nghiệp. Ở công ty chứng khoán thì bộ phận này là tự doanh. Họ mua bán và nắm giữ trái phiếu, cổ phiếu nhằm sinh lời cho doanh nghiệp, cũng như là đóng vai trò market maker, tạo thanh khoản cho thị trường.\n\nNguồn thứ 4 – ngân hàng đầu tư\nbao gồm những hoạt động như Mua bán và sát nhập (M&A), IPO, hỗ trợ/bảo lãnh phát hành cổ phiếu/trái phiếu. SSI, VCI, TCBS, VND có thể là vài cái tên sáng giá trong mảng này.\n\n4 mảng doanh thu trên chiếm từ 90-95% tổng doanh thu của hầu hết các công ty chứng khoán.\n\nDấu hiệu tích cực để đầu tư vào CTCK:\n- Lãi suất huy động giảm\n- Thanh khoản thị trường tăng\n- Dư nợ margin báo cáo gần nhất tăng trưởng\n- Danh mục tự doanh của các CTCK"},
+  {id:13,title:"VN-Index, nhà cái, đội lái và mối quan hệ với nợ công",category:"Chứng khoán",source:"MrT Finance",date:"2023",content:"Điều khiển thị trường chứng khoán VN đó là đội Vn-index (nhà cái) và đội lái cổ phiếu (750 mã cp).\n\nNăm nay sẽ có nhiều vụ M&A đình đám ở VN do lạm phát, kinh tế khó khăn là làn sóng thâu tóm DN diễn ra mạnh mẽ. M&A là Hoạt động mua bán và sáp nhập.\n\nThị trường Chứng khoán càng phát triển thì nợ công Quốc gia đó càng tăng cao. Hãy nhìn chỉ số Dow-Jones và con số nợ công của Mỹ, nó liên quan với nhau. Vn-Index ở 1500 thì nợ công VN khoảng 150 tỷ USD. Vn-Index lên 3000 điểm năm 2031 thì nợ công VN sẽ tăng lên tầm 300 tỷ Usd.\n\nCó 4 giai đoạn trong 1 chu kì kinh tế 10 năm, và nhà cái sẽ điều khiển chỉ số Vn-Index theo 4 giai đoạn này và phù hợp với tình hình kinh tế, chính trị trong mỗi giai đoạn. Để có thể điều khiển được chỉ số Vn-Index thì điều kiện bắt buộc là phải nắm nhiều cổ phiếu tụ. Đối với 750 mã cổ phiếu trên sàn đều có các đội lái độc lập.\n\nCó quỹ có nhiệm vụ điều khiển chỉ số Vn-Index đó là SCIC, quỹ ETF VNM, Quỹ ETF FTSE.\n\nCổ phiếu nào có nợ nhiều thì gọi là chơi, đầu cơ, lướt sóng như HPG, HSG, DIG, VND, SSI... Cổ phiếu không có nợ vay thì gọi là đầu tư như GAS, FPT, VCB, VNM."},
+  {id:14,title:"9 nguyên tắc gim vào não khi đầu tư",category:"Chứng khoán",source:"MrT Finance",date:"2023",content:"HÃY GHI NHỚ 9 ĐIỀU NÀY, GIM VÀO NÃO:\n\n1. Xu hướng giá đi theo chart tuần\n\n2. Giá phản ứng theo RSI theo D1\n\n3. Tích tiểu thành đại\n\n4. Tham thêm là tự sát, biết đủ là hạnh phúc\n\n5. Tôn trọng kiến thức cơ bản\n\n6. Cắt lỗ, giữ lại 50% vốn là còn tất cả\n\n7. Lãi kép cần có thời gian\n\n8. Hãy để mấy đứa ngu tranh cãi\n\n9. Sức khỏe còn quý hơn cả kim cương"},
+  {id:15,title:"Công thức định giá cổ phiếu — vì sao lãi suất quyết định 90% VN-Index",category:"Chứng khoán",source:"Under Wall Street",date:"2023",content:"Các bạn có biết cách tính giá trị của một cổ phiếu không?\nNắm được những thứ cơ bản như này thì mới biết được các bạn đang mua cái gì, mua cp hay mua mớ giấy lộn.\n\nGiá = Lợi nhuận kỳ vọng / lãi suất\nNếu lãi suất tăng => Mẫu số tăng => Giá CP giảm.\n\nChốt hạ: Lãi Tăng => Chiết Khấu Tăng => Tài sản rủi ro giảm.\n\nVì sao CK lại nhạy với lãi suất?\n- Doanh nghiệp vay vốn để hoạt động\n- Nhà đầu tư vay margin để mua\n- Chi phí vốn (WACC) tăng\n- PE phải co lại\n- Dòng tiền rút khỏi tài sản rủi ro về lại USD hoặc tiền gửi\n\nDẫn tới việc khi lãi suất tăng:\n- DN vay nợ đắt lên => Lãi Giảm => EPS giảm (Lợi nhuận trên mỗi cổ phiếu)\n- Margin đắt lên => bán giải chấp => giá giảm nhanh.\n=> Đây là lý do CK rơi mạnh đúng vào giai đoạn lãi suất neo đỉnh\n=> Và phục hồi mạnh trước khi lãi suất thực sự giảm (vì thị trường dự báo trước 6–12 tháng).\n\nVì sao lãi suất quyết định gần như 90% xu hướng VN-Index?\n\nỞ VN: margin cao → giá cổ phiếu phản ánh đúng giá vốn hơn là phản ánh doanh nghiệp => Do đó, mọi chu kỳ chứng khoán VN bị định hướng bởi ngân hàng, không phải bởi doanh nghiệp.\n\nĐọc 1000 lần. Ko nhớ thì cap màn hình lại, học thuộc."},
+  {id:16,title:"Bản chất gói kích thích kinh tế / BĐS / chứng khoán",category:"Chứng khoán",source:"MrT Finance",date:"2023",content:"Bản chất gói kích thích bđs, chứng khoán, kích thích kinh tế, tiêu dùng...\n\n- Là lượng tiền margin bơm vào trong 1 thị trường nhất định dựa trên lượng tài sản thật có sẵn trong thị trường (bao gồm hàng hoá, tiền mặt) của người tham gia thị trường (doanh nghiệp, tổ chức, cá nhân...)\n\n- Gói kích thích không phải muốn bơm là bơm. Gói này chỉ bơm được khi:\n+ Người tham gia thị trường tạo ra được nhiều sản phẩm, hàng hoá hơn. Tạo ra nhiều thì bơm nhiều. Không tạo ra thì không có bơm được.\n+ Người tham gia thị trường mang thêm tiền mặt (cash) mới vào thị trường để giao dịch. Tức là có hiệu quả thu hút đầu tư.\n\nTóm lại:\n- Gói kích thích là để một nhóm người tham gia thị trường (tạm gọi là nhóm T) nhận được tiền vốn để: Tạo ra nhiều sản phẩm hàng hoá hơn và Thu gom hàng hoá ở giá đáy. Nhóm T gián tiếp giúp cho nhóm bơm gói kích thích thu được lợi nhuận trong tương lai. Chứ không phải để giải cứu mấy ông đu đỉnh.\n\n- Bạn đu đỉnh và bạn chờ ai đó kích thích để bạn thoát lỗ. Như vậy là phi thực tế. Vì bạn lời thì người bơm gói kích thích người ta lỗ à? Mấy ông môi giới, chuyên gia...bđs chả hiểu cái vẹo gì cả."},
+  {id:17,title:"Chiến lược đầu tư theo chu kỳ 10 năm — vàng, CK, BĐS, BTC",category:"Bất động sản",source:"MrT Finance",date:"2023",content:"Học thuộc 4 giai đoạn kinh tế trong chu kỳ 10 năm và đầu tư kiếm nhiều tiền từ kênh vàng, chứng khoán, bất động sản, gửi bank.\n\nA. Chu kỳ thứ nhất từ năm 2007–2018\n\n1. Kinh tế phát triển đạt đỉnh năm 2007:\n- Bán hết chứng khoán, nghỉ chơi 2 năm\n- Bán hết bất động sản, nghỉ chơi 5 năm – Mua vàng giữ đến 2011\n- Thu hẹp kinh doanh, nghỉ kinh doanh luôn.\n\n2. Kinh tế ở đáy khủng hoảng năm 2009: Mua cổ phiếu và chốt lời sau 6-12 tháng, nghỉ chơi 2 năm. Không có mua bất động sản lúc này. Tiếp tục giữ vàng.\n\n3. Kinh tế giai đoạn lạm phát năm 2011:\n- Không có chơi chứng khoán\n- Không có mua bất động sản\n- Bán chốt lời vàng, gửi tiết kiệm ngân hàng 12-18 tháng\n\n4. Kinh tế phát triển bền vững 2013–2018:\nMua chứng khoán giá đáy giữ 5 năm – Mua bất động sản giá đáy giữ 5 năm – Vay ngân hàng, mở rộng kinh doanh tệt ga.\n\nB. Chu kỳ thứ hai từ năm 2018–2029\n\n1. Kinh tế phát triển đạt đỉnh năm 2018: Làm y chang như 1 ở chu kỳ thứ nhất.\n2. Kinh tế ở đáy khủng hoảng năm 2020: Làm y chang như 1 ở chu kỳ thứ nhất.\n- Mua BTC, Alcoin bán hết khi đạt đỉnh 69K mua lại ở đáy 15K.\n3. Kinh tế giai đoạn lạm phát năm 2022: Làm y chang như 1 ở chu kỳ thứ nhất.\n4. Kinh tế phát triển bền vững 2024–2029: Làm y chang như 1 ở chu kỳ thứ nhất."},
+  {id:18,title:"Thực chiến qua khủng hoảng 2008 — cách kiếm tiền từ chu kỳ",category:"Bất động sản",source:"MrT Finance",date:"2023",content:"Quá trình tôi kiếm tiền từ cuộc khủng hoảng 2008:\n\n1. Năm 2007–2008 kinh tế phát triển đạt đỉnh:\n- Thu hẹp các mô hình kinh doanh của bản thân, Cash out hết các mã chứng khoán và bán hết bất động sản nắm giữ.\n- Dồn dòng tiền của bản thân mua vàng để tích trữ.\n\n2. Năm 2009–2011 kinh tế chạm đáy khủng hoảng:\n- Bắt đầu tìm hiểu, học tập và nâng cao kiến thức bản thân.\n- Mua được các mã cổ phiếu và bất động sản rẻ như bó rau và vẫn tiếp tục nắm giữ vàng.\n- Bắt đầu biết tới BTC, mua được một ít, tích trữ cho tới 2017 bán chốt lời BTC đạt đỉnh ATH 19k, đầu năm 2018 btc sập 3k mua gom được 25 BTC.\n\n3. Năm 2011–2013 kinh tế bắt đầu hồi phục:\n- Chốt lời các mã cổ phiếu, vàng và lãi được hơn 2 tỷ cùng với số tiền gốc.\n- Tiếp tục gom thêm được các bất động sản giá rẻ.\n\n4. Năm 2013–2018 Kinh tế phát triển:\n- 2013 mở rộng thêm các hoạt động kinh doanh.\n- 2015 chốt lời một số bất động sản đầu cơ và tiếp tục đầu tư vào chứng khoán và bất động sản.\n- 2018 quyết định đầu tư hơn 2 tỷ vào Bitcoin, giá BTC lúc đó là 4000$.\n- 2021 Cash out 25 Bitcoin với giá 40k$ và kiếm được 1 triệu đô từ crypto."},
+  {id:19,title:"Bản chất lạm phát là bóc lột sức lao động",category:"Vàng & Tiền tệ",source:"MrT Finance",date:"2022",content:"Bản chất của lạm phát là bóc lột sức lao động.\n\nIn tiền nhiều ra 'Giải cứu' thực chất là cướp giá trị tích luỹ của người lao động. Tạo nên lạm phát.\n\nCướp mà không ai biết bị cướp!"},
+  {id:20,title:"Vai trò của vàng trong hệ thống tài chính toàn cầu",category:"Vàng & Tiền tệ",source:"Under Wall Street",date:"2024",content:"Vai trò của Vàng trong nền kinh tế là quan hệ cha - con của nó với USD và các đồng tiền khác. Tài chính có nhiêu đó thôi.\n\nGiá Vàng thế giới giảm là vì kỳ vọng vào chính sách thắt chặt tài khoá của đồng usd. Thế thì nó giảm là nó trả giá trị vào cash usd và kích hoạt những khối nợ usd vỡ. Thế thì phải chạy đua chống vỡ nợ! Vàng tăng đủ ngày đủ tháng là giảm, bí mật thế giới tài chính đấy.\n\nVàng tăng = USD mất giá = khối nợ phình to\nVàng giảm = USD mạnh lên = vỡ nợ được kích hoạt\n\nVàng không thể tăng mãi.\nNó tăng → để nợ phình → Rồi USD siết → để nợ vỡ → Rồi vàng giảm → Rồi chu kỳ lại bắt đầu.\n\nVàng không dùng để đầu tư.\nVàng dùng để định hình trạng thái USD và nợ toàn cầu. \"Vàng giảm là nó trả giá trị vào cash USD.\"\n\nUSD cần thanh khoản mạnh để làm gì?\nĐể ép các khối nợ bằng USD trên toàn cầu phải trả nợ hoặc vỡ nợ.\n\nĐây là bí mật vận hành của hệ thống tài chính toàn cầu."},
+  {id:21,title:"Giải mã trái phiếu doanh nghiệp — tại sao không nên mua dù bank bảo lãnh",category:"Trái phiếu & Rủi ro",source:"MrT Finance",date:"2023",content:"Giải mã Trái Phiếu Doanh Nghiệp:\n\nKHÔNG mua bất kỳ TRÁI PHIẾU DOANH NGHIỆP nào hết cho dù DOANH NGHIỆP đó đã được BANK BẢO LÃNH. Tại sao?\n\n1/ Vì doanh nghiệp KHÔNG thể vay nợ ngân hàng nên mới phải phát hành TRÁI PHIẾU. Lý do ngân hàng không cho vay vì thường là doanh nghiệp đã thế chấp hết tài sản, nợ cũ chưa trả xong, ngân hàng không cho đáo hạn...\n\n2/ Doanh nghiệp mới bàn với ngân hàng: nếu mày không cho tao vay thì mày phải đứng ra bảo lãnh cho tao phát hành TRÁI PHIẾU để tao dụ dân mua rồi tao trả nợ cho mày. Nếu không thì cả 2 cùng chết.\n\n3/ Thế là ngân hàng định giá KHỐNG tài sản doanh nghiệp lên thật cao để doanh nghiệp tha hồ phát hành trái phiếu doanh nghiệp dựa trên GIÁ TRỊ ẢO. Lẽ dĩ nhiên lãi suất cũng phải cao hơn lãi suất ngân hàng thì mới dụ dân bỏ tiền ra mua.\n\n4/ Vì có quá nhiều doanh nghiệp phát hành trái phiếu doanh nghiệp nên lãi suất lại tiếp tục đẩy lên cao chót vót. Vì được mặc sức rút tiền trong dân cho nên họ KHÔNG quan tâm lãi suất cao bao nhiêu, chỉ cần dụ được dân mua cho nên có nơi lên đến hơn 20% năm.\n\n5/ Tiền thu được hoàn toàn không dùng để sản xuất, kinh doanh mà dùng để trả nợ, trả lương và chảy vào tài khoản riêng của các cá nhân. Còn doanh nghiệp thì thực chất đã chết lâm sàng.\n\n6/ Các bạn nên nhớ doanh nghiệp KHÔNG thể XÙ NỢ ngân hàng vì đó là hợp đồng VAY VỐN nhưng DOANH NGHIỆP có thể BÙNG NỢ người mua TRÁI PHIẾU vì đó là hợp đồng làm ăn dân sự. Doanh nghiệp chỉ cần tuyên bố phá sản hay sát nhập là người giữ trái phiếu mất trắng tài sản."},
+  {id:22,title:"Giá trị nội tại doanh nghiệp và mối quan hệ với nợ",category:"Trái phiếu & Rủi ro",source:"MrT Finance",date:"2023",content:"Giá trị nội tại của một Doanh nghiệp là sao?\n\n- Một Doanh nghiệp chỉ phân tích được giá trị nội tại khi DN đó không có nợ.\n\n- Khi Doanh nghiệp có nợ, thì giá trị nội tại sẽ tỉ lệ nghịch với nợ, tức nợ càng nhiều thì giá trị nội tại cty giảm.\n\n- Doanh nghiệp nợ đầm đìa mà mấy ông đi phân tích giá trị nội tại thì đu đỉnh là đúng. Vì cổ phiếu của Doanh nghiệp đang nợ là một đống giấy nợ. Mà giấy nợ là tờ giấy nợ chứ có ăn được đâu mà giá với trị.\n\n- Muốn biết giá trị nội tại của Doanh nghiệp thì phải biết Doanh nghiệp nợ nhiều không, nếu nợ nhiều thì đi hỏi ông chủ nợ, ông muốn gì, tức là phân tích ông chủ nợ, chứ con nợ thì nợ đầm nợ đìa có gì mà phân tích nữa!"},
+  {id:23,title:"Forex và Crypto là sòng bạc — phân tích cơ cấu quyền lực",category:"Forex & Crypto",source:"MrT Finance",date:"2023",content:"Thị trường Forex, Crypto là sòng bạc với chủ sòng theo thứ tự:\n\n1. Ông chủ lớn là Chính Phủ, Các Quỹ lớn trên TG điều hành.\n\n2. Ông chủ nhỏ: các ngân hàng, Các nhà Tài Phiệt Giàu Có, giới Tinh Anh với nhiệm vụ là điều hành và phân phối tỉ giá, giá coin. Tạo ra sân chơi Crypto để thay thế Chứng Khoán tồn tại 400 năm. Sân chơi mới của giới tài phiệt.\n\nĐặc biệt là Coin dễ lái nhất, thị trường này còn nhỏ các Cá dễ điều hành.\n\nForex thì tạo ra các khủng hoảng, động đất, sóng thần, vỡ nợ, lạm phát các tin tức chiến tranh, dịch bệnh....\n\n- Chủ Sàn - Nhà đầu tư hay còn gọi là những người mua hàng nhưng món hàng này là mua chênh lệnh tỉ giá, Coin, token...\n\nBạn dành 30 phút để suy nghĩ về bài này và biết mình là ai?"},
+  {id:24,title:"Âm mưu thực sự đằng sau Crypto — 10 câu hỏi cần trả lời",category:"Forex & Crypto",source:"MrT Finance",date:"2023",content:"CRYPTO — ÂM MƯU THỰC SỰ ĐẰNG SAU CRYPTO LÀ GÌ?\n\n1. Tại sao Bitcoin lại ẩn danh? tại sao nó được tạo ra bởi người Nhật?\n2. Tại sao Polkadot lại do người Anh tạo ra?\n3. Tại sao CZ và Vitalik Buterin đều mang quốc tịch Canada?\n4. Tại sao có 1 dự án IDO khủng nhất Binance đứng sau nó là người Đức?\n5. Tại sao Trung Quốc cấm Crypto\n6. Tại sao Ấn Độ đánh thuế Crypto rất cao\n7. Tại sao đồng Luna của Hàn Quốc bị đánh sập mà ko phải đồng khác\n8. Tại sao các sàn giao dịch đều có hình bóng Mr Mỹ đứng sau.\n9. Tội phạm sử dụng Crypto rửa tiền như thế nào.\n10. Tại sao Crypto ở VN là vùng xám\n\nTrả lời xong 10 câu hỏi trên: => Bạn hiểu bản chất Crypto thì chắc chắn sẽ Giàu."},
+  {id:25,title:"Các mốc khủng hoảng tài chính lịch sử — thường xảy ra tháng 9–10",category:"Lịch sử tài chính",source:"Icetea Phố Wall",date:"2023",content:"Các bạn nên tìm hiểu:\n\n- Đại khủng hoảng 1929 xảy ra vào thứ Ba 29/10.\n\n- KH 1987 xảy ra vào thứ Hai 19/10. DJ sụt hơn 22% trong ngày.\n\n- KH 1997 xảy ra vào hậu bán năm 1997.\n\n- Lehman Brothers đệ đơn phá sản vào ngày 15 tháng 9 năm 2008.\n\n- KH 2008 toàn thế giới xảy ra vào tháng 10/2008.\n\nKhoảng tháng 9-10 là thời gian thường xảy ra Khủng hoảng kinh tế, tài chính, tiền tệ toàn cầu.\n\nVà khi xảy ra, hay vào thứ Hai, thứ Ba."},
+  {id:26,title:"Lời khuyên của MrT năm 2023–2024 — 7 điều nên làm",category:"Lời khuyên & Triết lý",source:"MrT Finance",date:"2023",content:"Những lời khuyên của MrT dành cho các bạn trong năm 2023-2024 này.\n1-2 năm này mọi thứ sẽ rất phức tạp, cẩn tắc vô áy náy nha!\n\nLúc này nên:\n1. Hạn chế mở rộng kinh doanh hay đầu tư, chỉ làm nhỏ thôi, duy trì hoặc cắt giảm công việc hiện tại.\n2. Hạn chế vay mượn để mua bất động sản lúc này mà chờ sau khi lãi suất tăng 18-22% (khoảng 3-5 tháng sau khi lãi suất tăng 18-22%) rồi mới mua.\n3. Tránh gây chuyện, 1 sự nhịn chín sự lành, thời kì này nhiều người đầu tư thua loss nên nóng tính lắm.\n4. Cấm không được nói xấu Đảng, nói xấu nhà nước trên facebook.\n5. Tập trung học, phát triển 1 kĩ năng nào đó có ích cho tương lai, cho việc kiếm tiền. Gợi ý số 1 của mrT dành cho bạn là học ngoại ngữ và nâng cao chuyên môn, sắp tới Việt Nam sẽ có rất nhiều việc để làm.\n6. Luyện tập thể dục thể thao hàng ngày, nâng cao sức đề kháng, ăn uống sạch, không uống rượu bia rác, không ăn vặt vía hè…hạn chế tối đa đưa thực phẩm bẩn vào cơ thể.\n7. Hạn chế đầu tư vốn nhiều nếu không đủ kiến thức."},
+  {id:27,title:"9 lá thư Jim Rogers gửi con gái — triết lý đầu tư và cuộc sống",category:"Lời khuyên & Triết lý",source:"MrT Finance",date:"2023",content:"Jim Rogers cùng với Warren Buffett và George Soros được gọi là ba người khổng lồ của giới tài chính thế giới.\n\nBức thư 1: Đừng để người khác ảnh hưởng đến con\nBa không còn để người khác ảnh hưởng mà thay vào đó luôn hành động theo quyết định của mình. Sau 30 năm, cuối cùng ba cũng hiểu rằng đây là phương pháp đầu tư tốt nhất.\n- Hãy là chính mình: Thành công sẽ luôn đến với những người dám mạo hiểm và dám đi con đường mà người khác không chọn.\n- Học cách tiết kiệm: Hãy chắc chắn rằng con luôn có thể tránh được các bẫy tiêu tiền.\n\nBức thư 2: Chuyên tâm vào những thứ con yêu thích\nPhương pháp thành công nhanh nhất đó là tìm ra việc mình yêu thích nhất rồi dốc toàn lực cho chúng.\n\nBức thư 3: Những kiến thức phổ thông hoàn toàn không phổ thông\nVoltaire đã viết: \"Kiến thức phổ thông hoàn toàn không chỉ phổ thông như vậy\".\n\nBức thư 4: Nạp thế giới vào đôi mắt của con\nHãy đi ra ngoài và nhìn thế giới. Không ngừng tò mò và khám phá thế giới.\n\nBức thư 5: Nghiên cứu triết học, học cách suy nghĩ\nNghiên cứu triết học đã giúp ba làm được điều này.\n\nBức thư 6: Học lịch sử\nNguyên tắc chung là: Những điều đã xảy ra trong quá khứ vẫn có khả năng sẽ xảy ra một lần nữa trong tương lai.\n\nBức thư 7: Nhận thức con người thật của mình\nBiết điểm yếu và nhận ra sai lầm của mình sẽ giúp con đứng vững khi khủng hoảng xảy ra.\n\nBức thư 8: Nhận ra sự thay đổi, nắm bắt sự thay đổi\nMọi thứ đều sẽ thay đổi. Nếu không chấp nhận thay đổi, con sẽ giống như một chú cá bơi ngược lại với dòng nước.\n\nBức thư 9: May mắn chỉ mỉm cười với những người không ngừng nỗ lực\nNếu con bắt đầu điều gì đó mà mình không hiểu, con sẽ không bao giờ thành công. Nếu con tập trung vào thứ gì đó con không biết, đây không gọi là đầu tư, đây gọi là đánh cược."},
+  {id:28,title:"Những thứ cần giỏi để tồn tại trên thị trường tài chính",category:"Lời khuyên & Triết lý",source:"MrT Finance",date:"2023",content:"NHỮNG THỨ CẦN PHẢI GIỎI NẾU MUỐN TỒN TẠI Ở THỊ TRƯỜNG TÀI CHÍNH:\n\nKhi 1 cá nhân bắt đầu bước chân vào thị trường tài chính thì họ luôn suy nghĩ đơn giản là mong muốn kiếm nhiều tiền 1 cách dễ dàng, không phải bỏ nhiều công sức, giàu nhanh từ thị trường chứng khoán, forex, tự do tài chính tuổi 30...\n\nNhưng sau 1 thời gian họ nhận ra mọi thứ không hề đơn giản. Thị trường tài chính đã cuốn hết mọi thứ từ giấc mơ đến tài sản của họ 1 cách âm thầm, lặng lẽ.\n\n1 kĩ năng quan trọng số 1 của bất kì ai muốn đi xa trên thị trường này là: BẢO TOÀN VỐN.\n\nBản đồ kiến thức cần học:\n\nA - Kiến thức nền bao quát thị trường tài chính gồm:\n+ Deepstate (chính phủ ngầm điều khiển thế giới qua FED)\n+ Tiền giấy, tiền máy tính\n+ Khủng Hoảng Kinh Tế, Lạm Phát, Lãi Suất\n+ Tăng Trưởng, Đạt đỉnh, Vòng Lặp\n\nB - Thị Trường Bất Động Sản:\n+ Bản chất BĐS, vì sao BĐS tăng/giảm\n+ Nhà cái điều khiển giá BĐS là ai? bằng cách nào?\n+ Chu kì tăng giảm, đỉnh đáy của BĐS\n\nC - Thị trường Chứng Khoán: 16 câu hỏi cốt lõi\n\nD - Thị trường Vàng chỉ số và vàng SJC\n\nE - Thị trường tiền điện tử (Coin, Crypto)"},
+  {id:29,title:"Mẹo không chế cảm xúc tiêu cực bằng vẽ và thủ công",category:"Tâm lý & Kỹ năng",source:"MrT Finance",date:"2023",content:"MẸO KHÔNG CHẾ CẢM XÚC TIÊU CỰC\nĐừng để mỗi lần cảm xúc bản thân như một ngọn đuốc!\n\n1. Nếu mệt mỏi – Xin hãy vẽ những bông hoa\n2. Nếu thất vọng – Hãy vẽ chân dung một ai đó, xấu cũng được. Chỉ cần bạn cầm bút lên và vẽ\n3. Nếu đang tức giận – Hãy vẽ những đường thẳng\n4. Nếu bị tuyệt vọng – Hãy vẽ những gì bạn thích\n5. Còn nếu bạn đang tổn thương, đau đớn – Hãy ghép mô hình\n6. Nếu buồn chán – Hãy thoải mái tô các loại màu khác nhau hoặc vẽ cầu vồng\n7. Nếu đang sợ hãi điều gì – Hãy kiếm ít len và đan nhé\n8. Nếu bạn đang lo lắng – Hãy làm một chú búp bê\n9. Nếu đang băn khoăn điều gì – Hãy gấp giấy\n10. Nếu đang luyến tiếc điều gì – Hãy vẽ những đường mê cung\n11. Nếu cảm thấy căm phẫn – Hãy nhỏ giọt nước mắt lên những miếng giấy vụn rồi ném chúng đi\n12. Bạn muốn tăng sức mạnh cho bản thân – Hãy vẽ tranh phong cảnh\n13. Muốn ổn định đầu óc, tư duy – Hãy vẽ hình ô vuông\n14. Còn nếu bạn muốn đầu óc minh mẫn trước khi đưa ra quyết định đúng đắn – Hãy vẽ các con sóng hoặc hình tròn.\n15. Và nếu bạn muốn định hình lại cảm xúc – Hãy tự họa bức chân dung"},
+];
+
+/* ══ STATE ══ */
+let posts=[], activeTab="all", searchQuery="", viewMode="list";
+let readerList=[], readerIdx=0;
+
+/* ══ INIT ══ */
+function loadData(){
+  try{
+    const s=localStorage.getItem("fk_posts_v4");
+    posts = s ? JSON.parse(s) : SEED.map(p=>({...p}));
+    if(!s) saveData();
+  }catch(e){ posts=SEED.map(p=>({...p})); }
+}
+function saveData(){ try{localStorage.setItem("fk_posts_v4",JSON.stringify(posts));}catch(e){} }
+
+/* ══ STATS ══ */
+function updateStats(){
+  document.getElementById("statTotal").textContent = posts.length;
+  document.getElementById("statCats").textContent = CATS.length-1;
+  const yr = new Date().getFullYear().toString();
+  document.getElementById("statNew").textContent = posts.filter(p=>p.date===yr).length;
+}
+
+/* ══ TABS ══ */
+function renderTabs(){
+  const c=document.getElementById("tabsContainer");
+  c.innerHTML=CATS.map(cat=>{
+    const n = cat.id==="all" ? posts.length : posts.filter(p=>p.category===cat.id).length;
+    return`<button class="tab${activeTab===cat.id?" active":""}" onclick="setTab('${cat.id}')">
+      <span class="te">${cat.e}</span>
+      <span class="tl">${cat.label}</span>
+      <span class="tbadge">${n}</span>
+    </button>`;
+  }).join("");
+}
+
+function setTab(id){
+  activeTab=id; searchQuery="";
+  document.getElementById("searchInput").value="";
+  renderTabs(); renderCards();
+  document.querySelector(".scroll-area").scrollTop=0;
+}
+
+/* ══ VIEW ══ */
+function setView(v){
+  viewMode=v;
+  document.getElementById("vbtnList").classList.toggle("active",v==="list");
+  document.getElementById("vbtnGrid").classList.toggle("active",v==="grid");
+  renderCards();
+}
+
+/* ══ FILTER ══ */
+function getFiltered(){
+  const q=searchQuery.toLowerCase();
+  return posts.filter(p=>{
+    const mc = activeTab==="all" || p.category===activeTab;
+    const ms = !q || p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q) || (p.source||"").toLowerCase().includes(q);
+    return mc && ms;
+  });
+}
+
+/* ══ CARDS ══ */
+function renderCards(){
+  const container=document.getElementById("cardsContainer");
+  const titleEl=document.getElementById("sectionTitle");
+  const countEl=document.getElementById("sectionCount");
+  const filtered=getFiltered();
+  const cat=CATS.find(c=>c.id===activeTab);
+  titleEl.textContent = cat ? `${cat.e} ${cat.label}` : "Tất cả";
+  countEl.textContent = `${filtered.length} bài viết`;
+
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">${searchQuery?"Không tìm thấy kết quả":"Chưa có bài viết"}</div>
+      <div class="empty-sub">${searchQuery?`Thử từ khoá khác cho "${searchQuery}"`:'Bấm "+ Thêm bài mới" để bắt đầu'}</div>
+    </div>`;
+    return;
+  }
+
+  const cls = viewMode==="grid" ? "cards-grid" : "cards-list";
+  container.innerHTML=`<div class="${cls}">${filtered.map(p=>cardHTML(p)).join("")}</div>`;
+}
+
+function cardHTML(p){
+  const color=COLORS[p.category]||"#5a5a5a";
+  const prev=p.content.length>120?p.content.slice(0,120)+"…":p.content;
+  return`<div class="card" onclick="openReader(${p.id})" id="card-${p.id}">
+    <div class="card-top">
+      <div class="card-header">
+        <div class="card-title">${esc(p.title)}</div>
+        ${p.date?`<span class="card-year">${esc(p.date)}</span>`:""}
+      </div>
+      <div class="card-preview">${esc(prev)}</div>
+    </div>
+    <div class="card-bottom">
+      <div class="ctags">
+        <span class="tag"><span class="tdot" style="background:${color}"></span>${esc(p.category)}</span>
+        ${p.source?`<span class="csrc">${esc(p.source)}</span>`:""}
+      </div>
+      <div class="cactions">
+        <button class="btn-read" onclick="event.stopPropagation();openReader(${p.id})">📖 Đọc</button>
+        <button class="btn-del" onclick="event.stopPropagation();deletePost(${p.id})" title="Xoá">✕</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ══ READER ══ */
+function openReader(id){
+  const filtered=getFiltered();
+  readerList=filtered;
+  readerIdx=filtered.findIndex(p=>p.id===id);
+  renderReader();
+  document.getElementById("readerOverlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function renderReader(){
+  const p=readerList[readerIdx];
+  if(!p) return;
+  const color=COLORS[p.category]||"#5a5a5a";
+  document.getElementById("rdrTitle").textContent=p.title;
+  document.getElementById("rdrMeta").innerHTML=`
+    <span class="tag"><span class="tdot" style="background:${color}"></span>${esc(p.category)}</span>
+    ${p.source?`<span style="font-size:11px;color:var(--text3)">${esc(p.source)}</span>`:""}
+    ${p.date?`<span style="font-size:11px;color:var(--text3)">· ${esc(p.date)}</span>`:""}
+  `;
+  document.getElementById("rdrBody").textContent=p.content;
+  document.getElementById("rdrInfo").innerHTML=`
+    <span>📄 Bài ${readerIdx+1} / ${readerList.length}</span>
+  `;
+  document.getElementById("btnPrev").disabled = readerIdx===0;
+  document.getElementById("btnNext").disabled = readerIdx===readerList.length-1;
+  document.getElementById("rdrBody").scrollTop=0;
+}
+
+function navReader(dir){
+  const next=readerIdx+dir;
+  if(next<0||next>=readerList.length) return;
+  readerIdx=next; renderReader();
+}
+
+function closeReader(){
+  document.getElementById("readerOverlay").classList.remove("open");
+  document.body.style.overflow="";
+}
+
+function handleReaderClick(e){
+  if(e.target===document.getElementById("readerOverlay")) closeReader();
+}
+
+/* ══ ADD MODAL ══ */
+function openAddModal(){
+  document.getElementById("modalOverlay").classList.add("open");
+  document.getElementById("formTitle").focus();
+}
+function closeAddModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+  ["formTitle","formSource","formContent"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("formCategory").value="";
+}
+function savePost(){
+  const title=document.getElementById("formTitle").value.trim();
+  const category=document.getElementById("formCategory").value;
+  const source=document.getElementById("formSource").value.trim();
+  const content=document.getElementById("formContent").value.trim();
+  if(!title){alert("Vui lòng nhập tiêu đề!");return;}
+  if(!category){alert("Vui lòng chọn danh mục!");return;}
+  if(!content){alert("Vui lòng nhập nội dung!");return;}
+  const p={id:Date.now(),title,category,source,content,date:new Date().getFullYear().toString()};
+  posts.unshift(p);
+  saveData(); closeAddModal();
+  activeTab=category; updateStats(); renderTabs(); renderCards();
+  toast("✓ Đã thêm bài viết mới!");
+}
+
+/* ══ DELETE ══ */
+function deletePost(id){
+  if(!confirm("Xoá bài viết này?")) return;
+  posts=posts.filter(p=>p.id!==id);
+  saveData(); updateStats(); renderTabs(); renderCards();
+  toast("Đã xoá bài viết");
+}
+
+/* ══ UTILS ══ */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2400);
+}
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ══ EVENTS ══ */
+document.getElementById("searchInput").addEventListener("input",function(){
+  searchQuery=this.value.trim(); renderCards();
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeReader();closeAddModal();}
+  if(document.getElementById("readerOverlay").classList.contains("open")){
+    if(e.key==="ArrowLeft") navReader(-1);
+    if(e.key==="ArrowRight") navReader(1);
+  }
+});
+
+/* ══ BOOT ══ */
+loadData(); updateStats(); renderTabs(); renderCards();
+</script>
+</body>
+</html>
